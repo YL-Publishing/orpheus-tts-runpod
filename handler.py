@@ -34,6 +34,7 @@ try:
     print("Step 2: Creating OrpheusModel...")
     MODEL = OrpheusModel(
         model_name="canopylabs/orpheus-tts-0.1-finetune-prod",
+        max_model_len=8192,
     )
     load_time = time.time() - load_start
     print(f"Model loaded in {load_time:.1f}s")
