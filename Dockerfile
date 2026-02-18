@@ -20,4 +20,6 @@ RUN pip install --no-cache-dir --no-deps orpheus-speech
 
 COPY handler.py /app/handler.py
 
+# Override vllm's ENTRYPOINT (it runs the OpenAI server, not our handler)
+ENTRYPOINT []
 CMD ["python3", "-u", "/app/handler.py"]
