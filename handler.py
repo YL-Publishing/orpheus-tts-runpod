@@ -24,9 +24,14 @@ print("=" * 60)
 
 load_start = time.time()
 
-try:
-    from orpheus_tts import OrpheusModel
+LOAD_ERROR = None
 
+try:
+    print("Step 1: Importing orpheus_tts...")
+    from orpheus_tts import OrpheusModel
+    print(f"  Import OK ({time.time() - load_start:.1f}s)")
+
+    print("Step 2: Creating OrpheusModel...")
     MODEL = OrpheusModel(
         model_name="canopylabs/orpheus-tts-0.1-finetune-prod",
     )
@@ -34,8 +39,8 @@ try:
     print(f"Model loaded in {load_time:.1f}s")
     print("Ready for requests.")
 except Exception as e:
-    print(f"FATAL: Model loading failed: {e}")
-    traceback.print_exc()
+    LOAD_ERROR = f"{type(e).__name__}: {e}\n{traceback.format_exc()}"
+    print(f"FATAL: {LOAD_ERROR}")
     MODEL = None
 
 # ── Constants ───────────────────────────────────────────────────────
@@ -76,7 +81,7 @@ def handler(event):
     BATCH:  input: { "segments": [{ "id": "N1", "text": "...", "voice": "tara" }, ...] }
     """
     if MODEL is None:
-        return {"error": "Model failed to load. Check build logs."}
+        return {"error": f"Model failed to load: {LOAD_ERROR}"}
 
     try:
         inp = event["input"]
