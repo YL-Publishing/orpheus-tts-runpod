@@ -1,0 +1,21 @@
+{
+  "input": {
+    "segments": [
+      {
+        "id": "N1",
+        "text": "Logan Raytheon stood at the edge of the cliff, his sword trembling in his grip. The memories of his past life crashed over him like waves.",
+        "voice": "leo"
+      },
+      {
+        "id": "N2",
+        "text": "No. <sigh> Not this time. This time, I will change everything.",
+        "voice": "dan"
+      },
+      {
+        "id": "N3",
+        "text": "The wind howled across the barren landscape. Below, the kingdom of Grandia stretched endlessly, unaware of the coming storm.",
+        "voice": "tara"
+      }
+    ]
+  }
+}
