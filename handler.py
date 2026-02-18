@@ -27,7 +27,6 @@ from orpheus_tts import OrpheusModel
 
 MODEL = OrpheusModel(
     model_name="canopylabs/orpheus-tts-0.1-finetune-prod",
-    max_model_len=2048,
 )
 
 load_time = time.time() - load_start
@@ -40,6 +39,15 @@ VOICES = {"tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe"}
 SAMPLE_RATE = 24000
 MAX_TEXT_LENGTH = 4000  # Safety limit per segment
 
+# Generation parameters (matched to working Orpheus-FastAPI reference)
+GEN_PARAMS = {
+    "temperature": 0.4,
+    "top_p": 0.9,
+    "max_tokens": 2000,
+    "stop_token_ids": [128258],
+    "repetition_penalty": 1.1,
+}
+
 
 # ── Audio generation ────────────────────────────────────────────────
 
@@ -48,6 +56,7 @@ def _generate_one(text: str, voice: str) -> bytes:
     syn_tokens = MODEL.generate_speech(
         prompt=text,
         voice=voice,
+        **GEN_PARAMS,
     )
 
     buf = io.BytesIO()

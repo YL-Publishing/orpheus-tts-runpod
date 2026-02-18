@@ -1,5 +1,5 @@
 # Orpheus TTS 3B — RunPod Serverless Worker
-# GPU: RTX 4090 (24GB) | Model: ~6GB | Image: ~15GB total
+# GPU: RTX 4090 (24GB) | Model: ~6GB | Image: ~20GB total
 #
 # Build:
 #   docker build --platform linux/amd64 -t YOUR_DOCKERHUB/orpheus-tts-runpod:latest .
@@ -15,17 +15,18 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install core dependencies
-RUN pip install --no-cache-dir \
-    runpod \
-    orpheus-speech \
-    "vllm==0.7.3"
+# Install orpheus-speech first (may pull its own vllm)
+RUN pip install --no-cache-dir runpod orpheus-speech
 
-# Pre-download model into image (eliminates cold-start download)
+# Force vllm==0.7.3 (orpheus-speech March 2025 known-good version)
+RUN pip install --no-cache-dir "vllm==0.7.3"
+
+# Pre-download model AND tokenizer into HF cache (standard format)
+# This eliminates cold-start downloads (~6GB model + tokenizer)
 RUN python3 -c "\
 from huggingface_hub import snapshot_download; \
-snapshot_download('canopylabs/orpheus-tts-0.1-finetune-prod', \
-                  local_dir='/app/hf_cache/hub/models--canopylabs--orpheus-tts-0.1-finetune-prod')"
+snapshot_download('canopylabs/orpheus-tts-0.1-finetune-prod'); \
+snapshot_download('canopylabs/orpheus-3b-0.1-pretrained')"
 
 COPY handler.py /app/handler.py
 
